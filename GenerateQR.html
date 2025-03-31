@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        #qrResult {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        #qrImage {
+            max-width: 100%;
+            margin-top: 15px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #saveButton {
+            background-color: #2196F3;
+            margin-top: 10px;
+        }
+        
+        #saveButton:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generator QR Code</h1>
+        
+        <div class="form-group">
+            <label for="qrText">Teks atau URL:</label>
+            <input type="text" id="qrText" placeholder="Masukkan teks atau URL untuk QR code">
+        </div>
+        
+        <div class="form-group">
+            <label for="qrSize">Ukuran:</label>
+            <select id="qrSize">
+                <option value="100">Kecil (100x100)</option>
+                <option value="200" selected>Sedang (200x200)</option>
+                <option value="300">Besar (300x300)</option>
+                <option value="400">Sangat Besar (400x400)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="qrColor">Warna QR:</label>
+            <input type="color" id="qrColor" value="#000000">
+        </div>
+        
+        <div class="form-group">
+            <label for="bgColor">Warna Latar Belakang:</label>
+            <input type="color" id="bgColor" value="#FFFFFF">
+        </div>
+        
+        <button id="generateBtn">Generate QR Code</button>
+        
+        <div id="qrResult" class="hidden">
+            <div id="qrImage"></div>
+            <button id="saveButton">Simpan QR Code</button>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generateBtn');
+            const qrText = document.getElementById('qrText');
+            const qrSize = document.getElementById('qrSize');
+            const qrColor = document.getElementById('qrColor');
+            const bgColor = document.getElementById('bgColor');
+            const qrResult = document.getElementById('qrResult');
+            const qrImage = document.getElementById('qrImage');
+            const saveButton = document.getElementById('saveButton');
+            
+            generateBtn.addEventListener('click', function() {
+                if (!qrText.value) {
+                    alert('Silakan masukkan teks atau URL terlebih dahulu!');
+                    return;
+                }
+                
+                // Clear previous QR code
+                qrImage.innerHTML = '';
+                
+                // Generate new QR code
+                const qr = new QRCode(qrImage, {
+                    text: qrText.value,
+                    width: parseInt(qrSize.value),
+                    height: parseInt(qrSize.value),
+                    colorDark: qrColor.value,
+                    colorLight: bgColor.value,
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // Show the result section
+                qrResult.classList.remove('hidden');
+            });
+            
+            saveButton.addEventListener('click', function() {
+                // Get the canvas or image and convert to data URL
+                const img = qrImage.querySelector('img');
+                
+                if (img) {
+                    // Create a temporary link
+                    const a = document.createElement('a');
+                    a.href = img.src;
+                    a.download = 'qrcode.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                } else {
+                    alert('Tidak dapat menyimpan QR Code. Silakan coba lagi.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
